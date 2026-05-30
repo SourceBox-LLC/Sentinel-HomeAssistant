@@ -65,5 +65,4 @@ refresh without any reconfiguration.
 
 ## License
 
-TODO: add a license file before publishing (e.g. Apache-2.0 or MIT for a
-client integration).
+[Apache License 2.0](LICENSE) © 2026 SourceBox LLC.

@@ -1,0 +1,30 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Sentinel",
+        "description": "Enter your Sentinel Command Center URL and an integration key. Generate a key in the Command Center under Integrations.",
+        "data": {
+          "base_url": "Command Center URL",
+          "api_key": "Integration key (osi_…)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate Sentinel",
+        "description": "Your integration key was rejected. Generate a new one in the Command Center under Integrations and paste it here.",
+        "data": {
+          "api_key": "Integration key (osi_…)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Couldn't reach the Command Center at that URL.",
+      "invalid_auth": "That integration key was rejected (invalid or revoked).",
+      "unknown": "Unexpected error — check the Home Assistant logs."
+    },
+    "abort": {
+      "already_configured": "This Sentinel organization is already configured.",
+      "reauth_successful": "Re-authentication successful."
+    }
+  }
+}

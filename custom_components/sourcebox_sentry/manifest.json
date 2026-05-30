@@ -1,0 +1,12 @@
+{
+  "domain": "sourcebox_sentry",
+  "name": "Sentinel by SourceBox",
+  "version": "0.1.0",
+  "config_flow": true,
+  "documentation": "https://github.com/SourceBox-LLC/sentinel-home-assistant",
+  "issue_tracker": "https://github.com/SourceBox-LLC/sentinel-home-assistant/issues",
+  "codeowners": ["@SourceBox-LLC"],
+  "iot_class": "cloud_polling",
+  "integration_type": "hub",
+  "requirements": []
+}

@@ -16,7 +16,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
-from .api import SentinelApiError, SentinelClient
+from .api import SentinelApiError, SentinelAuthError, SentinelClient
 from .const import CONF_API_KEY, CONF_BASE_URL, DOMAIN, motion_signal
 from .coordinator import SentinelCoordinator
 
@@ -31,6 +31,11 @@ PLATFORMS: list[Platform] = [
 
 # Backoff between motion-SSE reconnect attempts after the stream drops.
 _MOTION_RECONNECT_SECONDS = 10
+# Longer backoff when the stream is rejected for auth (revoked key): the
+# coordinator's own poll drives the actual reauth + entry reload (which
+# cancels this task), so the listener just needs to stop hammering the CC
+# with a 401 every few seconds in the meantime.
+_MOTION_AUTH_BACKOFF_SECONDS = 60
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -78,6 +83,13 @@ async def _motion_listener(hass: HomeAssistant, coordinator: SentinelCoordinator
                     async_dispatcher_send(hass, motion_signal(camera_id), event)
         except asyncio.CancelledError:
             raise
+        except SentinelAuthError as err:
+            # Revoked key. SentinelAuthError subclasses SentinelApiError, so it
+            # MUST be caught first. The coordinator surfaces the reauth; we just
+            # back off hard instead of looping on a 401 every 10s until then.
+            _LOGGER.debug("Motion stream auth rejected (%s); backing off", err)
+            await asyncio.sleep(_MOTION_AUTH_BACKOFF_SECONDS)
+            continue
         except SentinelApiError as err:
             _LOGGER.debug("Motion stream dropped (%s); reconnecting", err)
         except Exception:  # noqa: BLE001 — never let the listener die silently

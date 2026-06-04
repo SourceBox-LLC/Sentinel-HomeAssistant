@@ -46,7 +46,13 @@ class SentinelClient:
                 if resp.status != 200:
                     raise SentinelApiError(f"GET {path} returned HTTP {resp.status}")
                 return await resp.json()
-        except aiohttp.ClientError as err:
+        except (aiohttp.ClientError, ValueError) as err:
+            # ValueError covers json.JSONDecodeError: a 200 response with a
+            # malformed/truncated body (e.g. a proxy error page served with a
+            # JSON content-type) would otherwise propagate raw and crash the
+            # coordinator's update instead of degrading to a clean UpdateFailed.
+            # The deliberate SentinelAuthError/SentinelApiError raised above are
+            # neither ClientError nor ValueError, so they pass through untouched.
             raise SentinelApiError(f"GET {path} failed: {err}") from err
 
     async def async_get_status(self) -> dict:

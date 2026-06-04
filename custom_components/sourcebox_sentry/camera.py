@@ -2,14 +2,19 @@
 
 from __future__ import annotations
 
+import logging
+
 from homeassistant.components.camera import Camera, CameraEntityFeature
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .api import SentinelApiError
 from .const import DOMAIN
 from .entity import SentinelCameraMixin, add_camera_entities
+
+_LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
@@ -41,7 +46,16 @@ class SentinelCamera(SentinelCameraMixin, CoordinatorEntity, Camera):
     async def async_camera_image(
         self, width: int | None = None, height: int | None = None
     ) -> bytes | None:
-        return await self.coordinator.client.async_get_snapshot(self._camera_id)
+        # A camera that's briefly offline returns 503 here on every thumbnail
+        # poll; raising would spam the log with tracebacks for a normal,
+        # transient condition. Return None so HA shows its "no image"
+        # placeholder. The coordinator's poll is what surfaces a revoked key
+        # (reauth), so swallowing auth errors here too is harmless.
+        try:
+            return await self.coordinator.client.async_get_snapshot(self._camera_id)
+        except SentinelApiError as err:
+            _LOGGER.debug("Snapshot for %s unavailable: %s", self._camera_id, err)
+            return None
 
     async def stream_source(self) -> str | None:
         stream = self._cam.get("stream") or {}

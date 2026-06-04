@@ -1,7 +1,7 @@
 {
   "domain": "sourcebox_sentry",
   "name": "Sentinel by SourceBox",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "config_flow": true,
   "documentation": "https://github.com/SourceBox-LLC/Sentinel-HomeAssistant",
   "issue_tracker": "https://github.com/SourceBox-LLC/Sentinel-HomeAssistant/issues",

@@ -1,6 +1,6 @@
 # Sentinel by SourceBox — Home Assistant integration
 
-Connect [Sentinel](https://opensentry-command.fly.dev) to Home Assistant with
+Connect [Sentinel](https://sentinel-command.com) to Home Assistant with
 a single key. Every camera across every CloudNode in your organization shows
 up at once — live video, snapshots, recording control, and motion triggers —
 and the entity list re-syncs automatically as nodes and cameras come and go.
@@ -37,7 +37,7 @@ directory and restart.
    integration key (it starts with `osi_` and is shown once — copy it).
 2. In Home Assistant: **Settings → Devices & Services → Add Integration →
    Sentinel by SourceBox**.
-3. Enter your **Command Center URL** (e.g. `https://opensentry-command.fly.dev`,
+3. Enter your **Command Center URL** (e.g. `https://sentinel-command.com`,
    or your self-hosted address) and paste the key.
 
 That's it — all cameras across all nodes appear as devices. If you later add a

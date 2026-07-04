@@ -1,7 +1,7 @@
 # Sentinel by SourceBox — Home Assistant integration
 
 Connect [Sentinel](https://sentinel-command.com) to Home Assistant with
-a single key. Every camera across every CloudNode in your organization shows
+a single key. Every camera across every Camera Node in your organization shows
 up at once — live video, snapshots, recording control, and motion triggers —
 and the entity list re-syncs automatically as nodes and cameras come and go.
 
@@ -17,7 +17,7 @@ or counts against your viewer-hour cap.
 | Switch — Recording | camera | toggles continuous recording |
 | Binary sensor — Motion | camera | real-time motion feed (SSE) |
 | Binary sensor — Connectivity | camera | online/offline |
-| Sensor — Storage used / Version | CloudNode | node diagnostics |
+| Sensor — Storage used / Version | Camera Node | node diagnostics |
 
 ## Install
 

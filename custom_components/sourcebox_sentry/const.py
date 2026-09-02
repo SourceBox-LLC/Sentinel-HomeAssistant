@@ -6,7 +6,7 @@ CONF_BASE_URL = "base_url"
 CONF_API_KEY = "api_key"
 
 # Default Command Center URL (operators on a self-hosted CC override this).
-DEFAULT_BASE_URL = "https://opensentry-command.fly.dev"
+DEFAULT_BASE_URL = "https://sentinel-command.com"
 
 # How often the coordinator polls /cameras + /status for entity state.
 # Motion is real-time over SSE; this poll only covers camera/node state,

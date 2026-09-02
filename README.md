@@ -28,7 +28,7 @@ or counts against your viewer-hour cap.
 
 **Manual**
 
-Copy `custom_components/sourcebox_sentry/` into your HA `config/custom_components/`
+Copy `custom_components/sentinel/` into your HA `config/custom_components/`
 directory and restart.
 
 ## Set up

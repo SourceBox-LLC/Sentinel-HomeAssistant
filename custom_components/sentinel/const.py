@@ -1,6 +1,6 @@
 """Constants for the Sentinel by SourceBox integration."""
 
-DOMAIN = "sourcebox_sentry"
+DOMAIN = "sentinel"
 
 CONF_BASE_URL = "base_url"
 CONF_API_KEY = "api_key"

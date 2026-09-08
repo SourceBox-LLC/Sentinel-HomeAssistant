@@ -37,7 +37,7 @@ directory and restart.
    integration key (it starts with `osi_` and is shown once — copy it).
 2. In Home Assistant: **Settings → Devices & Services → Add Integration →
    Sentinel by SourceBox**.
-3. Enter your **Command Center URL** (e.g. `https://sentinel-command.com`,
+3. Enter your **Command Center URL** (e.g. `https://app.sentinel-command.com`,
    or your self-hosted address) and paste the key.
 
 That's it — all cameras across all nodes appear as devices. If you later add a

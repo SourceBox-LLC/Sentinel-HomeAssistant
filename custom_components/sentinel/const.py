@@ -6,7 +6,11 @@ CONF_BASE_URL = "base_url"
 CONF_API_KEY = "api_key"
 
 # Default Command Center URL (operators on a self-hosted CC override this).
-DEFAULT_BASE_URL = "https://sentinel-command.com"
+#
+# The `app.` host, not the apex.  sentinel-command.com is the marketing
+# site on GitHub Pages and serves a *.github.io certificate, so an HTTPS
+# request to it fails the TLS handshake before it reaches any API.
+DEFAULT_BASE_URL = "https://app.sentinel-command.com"
 
 # How often the coordinator polls /cameras + /status for entity state.
 # Motion is real-time over SSE; this poll only covers camera/node state,

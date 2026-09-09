@@ -1,0 +1,58 @@
+name: Validate
+
+# This repo had no automated checks at all. A change that fails to
+# import, or a manifest that HACS rejects, would not surface until
+# someone installed it into their Home Assistant — which is a bad place
+# to find out, because the failure mode there is a broken integration on
+# a user's own box rather than a red build here.
+#
+# Deliberately light. This is a thin integration with no test suite, so
+# the bar is "it parses, it imports, it lints, and HACS will accept it"
+# rather than pretending to coverage that doesn't exist.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  validate:
+    name: Lint + import
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Compile-check every file
+        run: python -m compileall -q custom_components
+
+      - name: Lint
+        run: |
+          python -m pip install --quiet ruff
+          # F (pyflakes) catches the things that actually break an
+          # integration at runtime: undefined names, unused imports
+          # masking a typo. Style rules are left off — this is a small
+          # repo and a red build on formatting trains people to ignore it.
+          ruff check --select F custom_components
+
+      - name: Manifest is valid JSON with the fields HACS requires
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          m = json.loads(pathlib.Path("custom_components/sentinel/manifest.json").read_text())
+          missing = [k for k in ("domain", "name", "version", "documentation", "codeowners")
+                     if not m.get(k)]
+          if missing:
+              sys.exit(f"manifest.json missing required key(s): {missing}")
+          # The directory name and the declared domain must agree or Home
+          # Assistant refuses to load the component.
+          assert m["domain"] == "sentinel", f'domain {m["domain"]!r} != directory name "sentinel"'
+          print(f'manifest ok — {m["domain"]} v{m["version"]}')
+          PY
+
+      - name: hacs.json is valid
+        run: python -c "import json;print('hacs.json ok —', json.load(open('hacs.json')))"

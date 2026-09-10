@@ -1,4 +1,4 @@
-"""Sensors — per-CloudNode storage + version diagnostics."""
+"""Sensors — per-CameraNode storage + version diagnostics."""
 
 from __future__ import annotations
 
@@ -42,7 +42,7 @@ async def async_setup_entry(
 
 
 class _NodeEntity(CoordinatorEntity):
-    """Base for entities on a CloudNode device."""
+    """Base for entities on a CameraNode device."""
 
     _attr_has_entity_name = True
 
@@ -67,7 +67,7 @@ class _NodeEntity(CoordinatorEntity):
             identifiers={(DOMAIN, f"node:{self._node_id}")},
             name=node.get("name") or self._node_id,
             manufacturer=MANUFACTURER,
-            model="Sentinel CloudNode",
+            model="Sentinel CameraNode",
             sw_version=node.get("version"),
         )
 
@@ -103,7 +103,7 @@ class SentinelNodeStorageSensor(_NodeEntity, SensorEntity):
 
 
 class SentinelNodeVersionSensor(_NodeEntity, SensorEntity):
-    """The node's reported CloudNode version."""
+    """The node's reported CameraNode version."""
 
     _attr_name = "Version"
     _attr_entity_category = EntityCategory.DIAGNOSTIC

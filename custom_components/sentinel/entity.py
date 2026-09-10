@@ -38,7 +38,7 @@ class SentinelCameraMixin:
         )
         node_id = cam.get("node_id")
         if node_id:
-            # Link the camera device under its CloudNode device (created by
+            # Link the camera device under its CameraNode device (created by
             # the sensor platform with the same identifier).
             info["via_device"] = (DOMAIN, f"node:{node_id}")
         return info

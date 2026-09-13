@@ -1,0 +1,29 @@
+# Dependency watching. This was the last Sentinel repo with nothing
+# watching it — the other four were wired up on 2026-09-09 and this one
+# was missed, which is why its `actions/checkout` sat on v5 while every
+# sibling had moved to v7.
+#
+# GitHub Actions only. The integration declares `"requirements": []` in
+# its manifest — it talks to Command Center over plain HTTP through Home
+# Assistant's own `aiohttp` session and pulls in no third-party Python
+# packages of its own — so there is no pip manifest here to watch. If a
+# requirement is ever added to manifest.json, note that Dependabot does
+# not read that file: it would need a requirements.txt or pyproject.toml
+# to track, and adding one without wiring it into the component would be
+# watching a file nothing installs.
+#
+# NO AUTO-MERGE WORKFLOW, matching CameraNode's reasoning rather than the
+# services': this code runs inside someone else's Home Assistant box, so a
+# bump that breaks it breaks their install, not a deployment we can roll
+# back. These get looked at.
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "ci"

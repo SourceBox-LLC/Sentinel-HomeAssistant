@@ -58,8 +58,14 @@ refresh without any reconfiguration.
 
 - Requires Home Assistant 2024.1 or newer.
 - Live video requires Home Assistant to be on the **same LAN** as the camera
-  nodes (the common home setup). An off-LAN proxy path is planned in the
-  Command Center.
+  nodes (the common home setup), and each node set up with **LAN streaming**
+  (`setup --lan-streaming`, which also sets a local password). An off-LAN
+  proxy path is planned in the Command Center.
+- A LAN-streaming node protects its video with that password. Command Center
+  gives Home Assistant each camera's stream URL with a signed token instead,
+  which opens only that camera's video and expires within two days (the URL
+  is refreshed automatically). This needs **CameraNode 0.1.81 or later**;
+  older nodes refuse Home Assistant's stream.
 - If the integration key is revoked or rotated, Home Assistant prompts you to
   re-enter a new one (Settings → Devices & Services → Reconfigure).
 

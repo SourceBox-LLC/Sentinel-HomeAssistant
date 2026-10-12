@@ -6,6 +6,7 @@ from collections.abc import Callable, Iterable
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import callback
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.entity import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
@@ -38,9 +39,25 @@ class SentinelCameraMixin:
         )
         node_id = cam.get("node_id")
         if node_id:
-            # Link the camera device under its CameraNode device (created by
-            # the sensor platform with the same identifier).
-            info["via_device"] = (DOMAIN, f"node:{node_id}")
+            # Link the camera device under its CameraNode device, which
+            # async_setup_entry registers before any platform loads.
+            node = (DOMAIN, f"node:{node_id}")
+            lookup = getattr(dr, "async_get_device_id_by_identifier", None)
+            if lookup is None:
+                # Before Home Assistant 2026.8: link by identifier.
+                info["via_device"] = node
+            else:
+                # 2026.8 and later refuse `via_device` (a RuntimeError that
+                # dropped every camera entity but the first); they link by
+                # the parent's registry id instead.
+                try:
+                    info["via_device_id"] = lookup(
+                        self.coordinator.hass,
+                        node,
+                        config_entry_id=self.coordinator.entry.entry_id,
+                    )
+                except ValueError:
+                    pass  # node not registered: no link, rather than no camera
         return info
 
     @property

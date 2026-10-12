@@ -13,11 +13,12 @@ import logging
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 from homeassistant.helpers.dispatcher import async_dispatcher_send
 
 from .api import SentinelApiError, SentinelAuthError, SentinelClient
-from .const import CONF_API_KEY, CONF_BASE_URL, DOMAIN, motion_signal
+from .const import CONF_API_KEY, CONF_BASE_URL, DOMAIN, MANUFACTURER, motion_signal
 from .coordinator import SentinelCoordinator
 
 _LOGGER = logging.getLogger(__name__)
@@ -47,6 +48,22 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
+
+    # Register each CameraNode's device before the platforms load, so the
+    # camera devices can link to it: the camera platform loads before the
+    # sensor platform whose entities would otherwise create it.
+    registry = dr.async_get(hass)
+    nodes = (coordinator.data.get("status") or {}).get("nodes", {}).get("items", [])
+    for node in nodes:
+        if node.get("node_id"):
+            registry.async_get_or_create(
+                config_entry_id=entry.entry_id,
+                identifiers={(DOMAIN, f"node:{node['node_id']}")},
+                name=node.get("name") or node["node_id"],
+                manufacturer=MANUFACTURER,
+                model="Sentinel CameraNode",
+                sw_version=node.get("version"),
+            )
 
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
 
